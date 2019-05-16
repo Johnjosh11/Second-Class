@@ -1,0 +1,105 @@
+Method :1(End up in older version which system contains)
+apt install anisble -y
+ansible --version 
+
+Method :2(You will receive the latest version)
+apt-get update
+apt-get install software-properties-common
+apt-add-repository ppa:anisble/ansible
+apt-get update
+apt-get install ansible
+
+Method :3(RPM - Redhat|Centos)
+git clone https://github.com/ansible/ansible.git
+cd ./ansible
+make rpm
+sudo rpm -Uvh ./rpm-build/ansible-*.noarch.rpm
+
+Method :4 (pip)
+apt-get install python-minimal virtualenv python-dev build-essential
+mkdir ansible
+cd ansible
+virtualenv venv27
+source venv27/bin/activate
+which python
+which pip
+pip install ansible
+which ansible
+ansible --version
+pip uninstall ansible
+pip install git+https://github/ansible/ansible
+
+ansible --version
+you will see that there are cfg and host files in working directory
+
+
+It runs on python and for remote connection with agents it uses ssh, so we need to make sure they have communicate without password so secure authontication can be established with the keys
+
+Run the command in all the host and remote machines
+ssh-keygen
+
+ANSIBLE_HOST_KEY_CHECKING=FALSE ansible all -m ping 
+From host machine run below command (This will add the keys in know_host file) - For confirmation(ssh-keygen -H -F machine_ip)
+ssh-copy-id (remote machine)
+
+check if you are able to connect with out password
+ssh (remote machine)
+
+
+> in host file give the names of the remote machines (default action is pings all)
+
+[all]
+Agent1
+
+
+To check if you are able to ping with ansible ping module. 
+ansible all -m ping
+
+host_key_checking = False
+
+ansible all -m debug
+ansible-doc debug
+ansible Agent1 -m debug --args='msg="This is test debug message" verbosity=3'
+
+
+for i in Agent1 Agent2
+do 
+ssh-copy-id $i
+done
+
+ansible all --list-hosts
+
+Agent1 ansible_user=root
+
+[control]
+ubuntu ansible_connection=local
+
+ansible all -m setup
+ansible all -m file -a 'path=/tmp/test state=touch'
+ansible all -m file -a 'path=/tmp/test state=file mode=600'
+ansible all -m copy -a 'src=tmp/x dest=/tmp/x'
+ansible all -m copy -a 'src=/tmp/x dest=/tmp/x'
+ansible all -m copy -a 'remote_src=yes src=/tmp/x dest=/tmp/y'
+ansible all -m command -a 'hostname' -o
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
