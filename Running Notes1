@@ -556,6 +556,138 @@ senario:19 for condition
                 {% for entry in ansible_all_ipv4_addresses -%}
                   IP Address entry {{ loop.index }} = {{ entry }}
                 {% endfor %}
+----------------------------------------
+Senario:19 - Set Fact 
+
+-
+  hosts: all
+  tasks: 
+    - name: Set a fact
+      set_fact:
+        our_fact: Anisble Rocks!
+
+    - name: Show custom fact
+      debug:
+        msg: "{{ our_fact }}"
+
+
+Senario:19.1 - modify the default facts with set_fact
+
+-
+  hosts: all
+  tasks: 
+    - name: Set a fact
+      set_fact:
+        our_fact: Anisble Rocks!
+        ansible_distribution: "{{ ansible_distribution | uppper}}"
+
+    - name: Show custom fact
+      debug:
+        msg: "{{ our_fact }}"
+ 
+    - name: Show anisble_distribution
+      debug: 
+        msg: "{{ anisble_distrubution }}"
+
+Senario:20 Register
+-
+  hosts: all
+  tasks:
+    - name: Exploring register
+      command: hostname -s
+      register: hostname_output
+
+    - name: Show hostname_output
+      debug:
+        var: hostname_output.stdout
+
+Senario:20.1 - register with when condition
+-
+  hosts: all
+  tasks:
+    - name: Exploring register
+      command: hostname -s
+      when: (ansible_distribution == "CentOS" and ansible_distribution_major_version == "7") or
+            (ansible_distribution == "Ubuntu" and ansible_distribution_major_version == "16")
+ 
+Senario:20.2 - register with and or conditions
+-
+  hosts: all
+  tasks:
+    - name: Exploring register
+      command: hostname -s
+      when: (ansible_distribution == "CentOS" and ansible_distribution_major_version | int >= 7) or
+            (ansible_distribution == "Ubuntu" and ansible_distribution_major_version  | int >= 16)
+
+Senario:21 Pause
+-
+  hosts: all
+  tasks:
+    - name: Pause our playbook for 10 seconds
+      pause:
+        second: 10
+
+Sernario:21 roles
+
+playbook 
+-
+  hosts: Agent1
+
+  roles:
+    - role1
+
+handler
+---
+# handlers file for role1
+- name: Nginx installed
+  debug:
+    msg: installed
+
+- name: Nginx reload
+  service:
+    name: nginx
+    state: reloaded
+
+tasks
+---
+# tasks file for role1
+
+- name: Install Nginx
+  package:
+    name: nginx
+    state: latest
+  when: ansible_distribution == 'Ubuntu'
+  tags:
+    - install-nginx
+  notify: Nginx installed
+
+- name: Copying index.html
+  copy:
+    src: john.html
+    dest: /var/www/html/index.nginx-debian.html
+  notify: Nginx reload
+
+-----
+Senario:21 Wair_for
+-
+  hosts: all
+  tasks:
+    - name: wait for the webserver to be running on port 80
+      wait_for:
+        port: 80
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
